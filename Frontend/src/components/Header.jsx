@@ -13,7 +13,7 @@ const Header = () => {
         className="self-center whitespace-nowrap text-sm sm:text-xl dark:text-white font-semibold"
       >
         <span className="px-2 py-1 bg-gradient-to-r from-emerald-400 to-cyan-400 rounded-md">
-          ArysDomi's
+          Arys Domi
         </span>
         Blog
       </Link>
@@ -29,11 +29,16 @@ const Header = () => {
         <AiOutlineSearch className="w-6 h-5"></AiOutlineSearch>
       </Button>
       <div className="flex gap-2 md:order-2">
-        <Button className="w-12 h-10 hidden sm:inline" color="gray" pill>
+        <Button
+          className="w-12 h-10 hidden sm:inline"
+          outline
+          gradientDuoTone="greenToBlue"
+          pill
+        >
           <FaMoon></FaMoon>
         </Button>
         <Link to="/sign-in">
-          <Button gradientDuoTone="greenToBlue" pill>
+          <Button gradientDuoTone="greenToBlue" outline pill>
             Sign In
           </Button>
         </Link>
