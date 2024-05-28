@@ -4,6 +4,8 @@ const mongoose = require("mongoose");
 
 const app = express();
 
+const user_route = require("./routes/user_route");
+
 /**
  * * Connect with PORT
  */
@@ -38,3 +40,6 @@ mongoose
     console.log(error);
     process.exit(1);
   });
+
+app.use(express.json());
+app.use("/api/auth/user", user_route);
