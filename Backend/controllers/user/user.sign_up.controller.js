@@ -2,38 +2,44 @@ const argon2 = require("argon2");
 const jwt = require("jsonwebtoken");
 
 const User = require("../../models/user.model");
-const usernameValidation = "./user.validation.controller.js";
 
 const sign_up = async (req, res) => {
   const { username, password } = req.body;
 
   const usernameRegexPattern = /^[A-Za-z0-9]+(?:[._-][A-Za-z0-9]+)*$/;
   const usernameValid = usernameRegexPattern.test(username);
-  // const usernameValid = username.match(usernameRegex);
-  console.log("Username: " + username);
-  console.log("Username Valid: " + usernameValid);
 
-  // Check Username is a empty string
-  if (!username)
+  const passwordRegexPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]$/;
+  const passwordValid = passwordRegexPattern.test(password);
+
+  // Check Username and Password is a empty string
+  if (!username || !password)
     return res.status(400).json({
       success: false,
-      message: "Username is required",
+      message: "Username or Password is required",
     });
 
-  // Check length of Username between 7 and 25 characters
-  if (username.length < 7 || username.length > 25)
+  // Check length of Username, Password between 7 and 25 characters
+  if (
+    username.length < 7 ||
+    username.length > 25 ||
+    password.length < 7 ||
+    password.length > 25
+  )
     return res.status(400).json({
       success: false,
-      message: "Username must between 7 and 25 characters",
+      message: "Username or Password must between 7 and 25 characters",
     });
 
   // Check Username is match with Regex pattern
-  if (usernameValid == false)
+  if (usernameValid == false || passwordValid == false)
     return res.status(400).json({
       success: false,
-      message: "Username is not match with Regex Pattern",
+      message: "Username or Password is not match with Regex Pattern",
     });
 
+  // Passed validation
   try {
     // Check user existed
     const userExisted = await User.findOne({ username });
