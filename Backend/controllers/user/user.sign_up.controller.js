@@ -10,11 +10,11 @@ const sign_up = async (req, res) => {
   const usernameValid = usernameRegexPattern.test(username);
 
   const passwordRegexPattern =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@.#$!%*?&])[A-Za-z\d@.#$!%*?&]*$/;
   const passwordValid = passwordRegexPattern.test(password);
 
   // Check Username and Password is a empty string
-  if (!username || !password)
+  if (!username || !password || username === "" || password === "")
     return res.status(400).json({
       success: false,
       message: "Username or Password is required",
@@ -36,26 +36,27 @@ const sign_up = async (req, res) => {
   if (usernameValid == false || passwordValid == false)
     return res.status(400).json({
       success: false,
-      message: "Username or Password is not match with Regex Pattern",
+      message: "Username or Password is not followed with Regex Pattern",
     });
+
+  // Check user existed
+  const userExisted = await User.findOne({ username });
+
+  if (userExisted)
+    return res.status(400).json({
+      success: false,
+      message: `${username} has been already existed`,
+    });
+
+  // Encrypted password and Save new User Registered]
+  const hashPassword = await argon2.hash(password);
+  const newUser = new User({
+    username: username,
+    password: hashPassword,
+  });
 
   // Passed validation
   try {
-    // Check user existed
-    const userExisted = await User.findOne({ username });
-
-    if (userExisted)
-      return res.status(400).json({
-        success: false,
-        message: `${username} has been already existed`,
-      });
-
-    // Encrypted password and Save new User Registered
-    const hashPassword = await argon2.hash(password);
-    const newUser = new User({
-      username: username,
-      password: hashPassword,
-    });
     await newUser.save();
 
     // Return token
@@ -70,10 +71,9 @@ const sign_up = async (req, res) => {
       accessToken,
     });
   } catch (error) {
-    console.log(error);
     res.status(500).json({
       success: false,
-      message: "Internal Server Error",
+      message: `${error.message}` || "Internal Server Error",
     });
   }
 };

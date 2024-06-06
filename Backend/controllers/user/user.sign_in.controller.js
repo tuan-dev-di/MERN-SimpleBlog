@@ -47,7 +47,7 @@ const sign_in = async (req, res) => {
     console.log(error);
     return res.status(500).json({
       success: false,
-      message: "Internet Server Error",
+      message: `${error.message} - Internal Server Error`,
     });
   }
 };
